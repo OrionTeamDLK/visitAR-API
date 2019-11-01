@@ -4,14 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "env-cmd": "^10.0.1",
     "express": "^4.17.1",
+    "firebase": "^7.2.3",
+    "firebase-admin": "^8.7.0",
     "nodemon": "^1.19.4"
   }
 }
