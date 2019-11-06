@@ -1,6 +1,7 @@
 const admin = require('firebase-admin')
-const serviceAccount = require('../config/serviceAccount.json')
+const serviceAccount = require('../../config/serviceAccount.json')
 
+//Destruct enviroment object
 const {
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
@@ -12,6 +13,7 @@ const {
   FIREBASE_MEASUREMENT_ID
 } = process.env;
 
+//Create Firebase config
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
@@ -23,9 +25,11 @@ const firebaseConfig = {
   measurementId: FIREBASE_MEASUREMENT_ID
 };
 
+//Initialize Firebase admin
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: FIREBASE_DATABASE_URL
 });
 
+//Export Admin App
 module.exports = admin
