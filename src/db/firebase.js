@@ -1,5 +1,4 @@
 const admin = require('firebase-admin')
-const serviceAccount = require('../../config/serviceAccount.json')
 
 //Destruct enviroment object
 const {
