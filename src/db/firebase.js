@@ -10,7 +10,9 @@ const {
   FIREBASE_STORAGE_BUCKET,
   FIREBASE_MESSAGING_SENDER_ID,
   FIREBASE_APP_ID,
-  FIREBASE_MEASUREMENT_ID
+  FIREBASE_MEASUREMENT_ID,
+  FIREBASE_PRIVATE_KEY,
+  FIREBASE_CLIENT_EMAIL
 } = process.env;
 
 //Create Firebase config
@@ -27,7 +29,11 @@ const firebaseConfig = {
 
 //Initialize Firebase admin
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert({
+    "project_id": FIREBASE_PROJECT_ID,
+    "private_key": FIREBASE_PRIVATE_KEY,
+    "client_email": FIREBASE_CLIENT_EMAIL
+  }),
   databaseURL: FIREBASE_DATABASE_URL
 });
 
