@@ -1,5 +1,5 @@
-const firebase = require('firebase')
 const admin = require('firebase-admin')
+const serviceAccount = require('../config/serviceAccount.json')
 
 const {
   FIREBASE_API_KEY,
@@ -23,10 +23,9 @@ const firebaseConfig = {
   measurementId: FIREBASE_MEASUREMENT_ID
 };
 
-admin.initializeApp(firebaseConfig)
-firebase.initializeApp(firebaseConfig)
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: FIREBASE_DATABASE_URL
+});
 
-module.exports = {
-  firebase,
-  admin
-}
+module.exports = admin
