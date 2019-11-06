@@ -29,18 +29,18 @@ const firebaseConfig = {
 
 // console.log(FIREBASE_PRIVATE_KEY)
 // console.log({
-//   "project_id": FIREBASE_PROJECT_ID.replace(/\\n/g, '\n'),
+//   "project_id": FIREBASE_PROJECT_ID,
 //   "private_key": FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-//   "client_email": FIREBASE_CLIENT_EMAIL.replace(/\\n/g, '\n')
+//   "client_email": FIREBASE_CLIENT_EMAIL
 // })
 
 
 //Initialize Firebase admin
 admin.initializeApp({
   credential: admin.credential.cert({
-    "project_id": FIREBASE_PROJECT_ID.replace(/\\n/g, '\n'),
+    "project_id": FIREBASE_PROJECT_ID,
     "private_key": FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    "client_email": FIREBASE_CLIENT_EMAIL.replace(/\\n/g, '\n')
+    "client_email": FIREBASE_CLIENT_EMAIL
   }),
   databaseURL: FIREBASE_DATABASE_URL
 });
