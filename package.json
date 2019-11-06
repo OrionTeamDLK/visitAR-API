@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+<<<<<<< HEAD
     "start": "node src/index.js",
+=======
+    "start": "node src/index.js"
+>>>>>>> 80d9d916e8482abe96d95266871e005cc8ab60d9
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
