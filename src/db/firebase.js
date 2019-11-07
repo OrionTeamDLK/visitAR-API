@@ -27,14 +27,6 @@ const firebaseConfig = {
   measurementId: FIREBASE_MEASUREMENT_ID
 };
 
-console.log(FIREBASE_PRIVATE_KEY)
-console.log({
-  "project_id": FIREBASE_PROJECT_ID,
-  "private_key": process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  "client_email": FIREBASE_CLIENT_EMAIL
-})
-
-
 //Initialize Firebase admin
 admin.initializeApp({
   credential: admin.credential.cert({
