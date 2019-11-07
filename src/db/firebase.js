@@ -38,9 +38,9 @@ console.log({
 //Initialize Firebase admin
 admin.initializeApp({
   credential: admin.credential.cert({
-    "project_id": FIREBASE_PROJECT_ID,
-    "private_key": process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    "client_email": FIREBASE_CLIENT_EMAIL
+    project_id: FIREBASE_PROJECT_ID,
+    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: FIREBASE_CLIENT_EMAIL
   }),
   databaseURL: FIREBASE_DATABASE_URL
 });
