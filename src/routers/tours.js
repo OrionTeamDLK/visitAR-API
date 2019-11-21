@@ -16,76 +16,48 @@ router.get('/tours', async (req, res) => {
 
     for (let documentSnapshot of documentSnapshots) {
 
-      if (documentSnapshot.exists) {
+      let id = documentSnapshot.get('id')
+      let name = documentSnapshot.get('name')
+      let distance = documentSnapshot.get('distance_km')
+      let time = documentSnapshot.get('time_mins')
+      let startpoint = documentSnapshot.get('starting point')
 
-        let id = documentSnapshot.get('id')
-        let name = documentSnapshot.get('name')
-        let distance = documentSnapshot.get('distance_km')
-        let time = documentSnapshot.get('time_mins')
-        let startpoint = documentSnapshot.get('starting point')
-
-
-        documentArray.push({
-          id,
-          name,
-          distance,
-          time,
-          startpoint
-        })
-
-      } else {
-        console.log(`Found missing document: ${documentSnapshot.id}`);
-      }
+      documentArray.push({
+        id,
+        name,
+        distance,
+        time,
+        startpoint
+      })
     }
 
     res.status(200).send(documentArray)
 
   } catch (e) {
-
     console.log(e);
     res.status(500).send()
   }
 })
 
-router.get('/toursOld', async (req, res) => {
+router.get('/tourData', async (req, res) => {
 
   try {
-    const colRef = firestore.collection('tours')
+    const tourRef = firestore.collection('tours')
+    const documentRefs = await tourRef.listDocuments()
+    const tourId = req.body.id
     let documentArray = [];
 
-    await colRef.listDocuments().then(documentRefs => {
-      return firestore.getAll(...documentRefs);
-    }).then(documentSnapshots => {
+    const querySnapshot = await tourRef.where('id', '==', tourId).get()
 
-      for (let documentSnapshot of documentSnapshots) {
-        if (documentSnapshot.exists) {
-
-          let id = documentSnapshot.get('id')
-          let name = documentSnapshot.get('name')
-          let distance = documentSnapshot.get('distance_km')
-          let time = documentSnapshot.get('time_mins')
-          let startpoint = documentSnapshot.get('starting point')
-
-
-          documentArray.push({
-            id,
-            name,
-            distance,
-            time,
-            startpoint
-          })
-        } else {
-          console.log(`Found missing document: ${documentSnapshot.id}`);
-        }
-      }
-
-    });
+    querySnapshot.forEach(documentSnapshot => {
+      documentArray.push(documentSnapshot.data())
+    })
 
     res.status(200).send(documentArray)
 
   } catch (e) {
-    console.log(e);
-    res.status(500).send()
+    console.log(e)
+    res.status(500).send(e)
   }
 })
 
