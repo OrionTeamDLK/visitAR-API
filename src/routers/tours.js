@@ -43,97 +43,157 @@ router.get('/tours', auth, async (req, res) => {
   }
 })
 
+//?subarrows=true&tokens=true
 router.get('/tourData', auth, async (req, res) => {
 
   try {
-    const tourRef = firestore.collection('tours')
-    const tourId = req.body.id
+
     let documentArray = [];
+    let tourStopsArr = [];
+
+    const tourRef = firestore.collection('tours')
+
+    // console.log(req.query)
+    //
+    // if (req.query.subarrows) {
+    //   console.log(req.query.subarrows)
+    // }
+    //
 
 
-    const querySnapshot = await tourRef.where('id', '==', tourId).get()
-    //  console.log(querySnapshot)
-    let docs = querySnapshot.docs;
-    let subArrows = [];
-    let tokens = [];
-    for (let doc of docs) {
+    const querySnapshot = await tourRef.where('id', '==', req.body.id).get()
 
-      const subCollections = await doc._ref.listCollections()
+    let docs = querySnapshot.docs
 
-      for (let subCollection of subCollections) {
+    console.log(docs[0]._ref.path)
 
-        let docRefs = await subCollection.listDocuments();
+    const documentSnapshot = await docs[0]._ref.get()
 
-        for (let docRef of docRefs) {
-          let documentSnapshot = await docRef.get()
+    let {
+      id,
+      name,
+      distance_km,
+      time_mins,
+      starting_point,
+      over_view,
+      tourStops
+    } = documentSnapshot.data();
 
-          if (subCollection.id == "sub arrows") {
-            subArrows.push(documentSnapshot.data())
-          } else {
-            tokens.push(documentSnapshot.data())
-          }
-        }
-        //console.log(docRef)
 
+    console.log(documentSnapshot.data())
+
+    for (let tourStop of tourStops) {
+      const documentSnapshot = await tourStop.get()
+      if (documentSnapshot.exists) {
+        tourStopsArr.push(documentSnapshot.data())
       }
-      let tourStopsArr = [];
-
-      let {
-        id,
-        name,
-        distance_km,
-        time_mins,
-        starting_point,
-        over_view,
-        tourStops
-      } = doc.data();
-      // let id = doc.get('id')
-      // let name = doc.get('name')
-      // let distance = doc.get('distance_km')
-      // let time = doc.get('time_mins')
-      // let startpoint = doc.get('starting point')
-      // let overview = doc.get('over_view')
-      // let landmarkRefs = doc.get('tourStops')
-
-      //  console.log(doc.data())
-
-      for (let tourStop of tourStops) {
-        const documentSnapshot = await tourStop.get()
-
-        if (documentSnapshot.exists) {
-          tourStopsArr.push(documentSnapshot.data())
-        }
-      }
-      //console.log(doc)
-
-      // doc.listCollections().then(collections => {
-      //   for (let collection of collections) {
-      //     console.log(`Found subcollection with id: ${collection.id}`);
-      //   }
-      // });
-
-      //let documentRef = firestore.doc('tours/tour1');
-
-      // documentRef.listCollections().then(collections => {
-      //   for (let collection of collections) {
-      //     console.log(`Found subcollection with id: ${collection.id}`);
-      //   }
-      // });
-
-      documentArray.push({
-        id,
-        name,
-        distance_km,
-        time_mins,
-        starting_point,
-        over_view,
-        tourStopsArr,
-        subArrows,
-        tokens
-      })
     }
 
+    documentArray.push({
+      id,
+      name,
+      distance_km,
+      time_mins,
+      starting_point,
+      over_view,
+      tourStopsArr,
+    })
+
+    if (req.query.tokens) {
+
+      const tokensRef = firestore.collection(`${docs[0]._ref.path}/tokens`)
+      let docRefs = await tokensRef.listDocuments();
+      let tokenArr = []
+
+      for (let docRef of docRefs) {
+        let documentSnapshot = await docRef.get()
+        tokenArr.push(documentSnapshot.data())
+      }
+
+      documentArray.push({
+        "tokens": tokenArr
+      })
+
+    }
+
+    if (req.query.subarrows) {
+
+      const subarrowsRef = firestore.collection(`${docs[0]._ref.path}/sub arrows`)
+      let docRefs = await subarrowsRef.listDocuments();
+      let subarrowsArr = []
+
+      for (let docRef of docRefs) {
+        let documentSnapshot = await docRef.get()
+        subarrowsArr.push(documentSnapshot.data())
+      }
+
+      documentArray.push({
+        "sub_arrows": subarrowsArr
+      })
+
+    }
+
+
     res.status(200).send(documentArray)
+
+
+
+    // for (let doc of docs) {
+    //
+    //   const subCollections = await doc._ref.listCollections()
+    //
+    //   for (let subCollection of subCollections) {
+    //
+    //     let docRefs = await subCollection.listDocuments();
+    //
+    //     for (let docRef of docRefs) {
+    //       let documentSnapshot = await docRef.get()
+    //
+    //       if (subCollection.id == "sub arrows") {
+    //         subArrows.push(documentSnapshot.data())
+    //       } else {
+    //         tokens.push(documentSnapshot.data())
+    //       }
+    //     }
+    //     //console.log(docRef)
+    //
+    //   }
+    //   let tourStopsArr = [];
+    //
+    //   let {
+    //     id,
+    //     name,
+    //     distance_km,
+    //     time_mins,
+    //     starting_point,
+    //     over_view,
+    //     tourStops
+    //   } = doc.data();
+
+    //
+    //   for (let tourStop of tourStops) {
+    //     const documentSnapshot = await tourStop.get()
+    //
+    //     if (documentSnapshot.exists) {
+    //       tourStopsArr.push(documentSnapshot.data())
+    //     }
+    //   }
+
+    //
+    //   documentArray.push({
+    //     id,
+    //     name,
+    //     distance_km,
+    //     time_mins,
+    //     starting_point,
+    //     over_view,
+    //     tourStopsArr,
+    //     subArrows,
+    //     tokens
+    //   })
+    // }
+
+
 
   } catch (e) {
     console.log(e)
