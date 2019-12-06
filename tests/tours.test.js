@@ -21,8 +21,7 @@ describe('/tours Endpoint', () => {
     time: 120
   }
 
-
-  it('When URL is incorrect, Should returb 404', async () => {
+  it('When URL is incorrect, Should return 404', async () => {
     const res = await request(app)
       .get('/tour')
       .expect(404)
@@ -42,5 +41,5 @@ describe('/tours Endpoint', () => {
 })
 
 describe('/tourData Endpoint', () => {
-  
+
 })
