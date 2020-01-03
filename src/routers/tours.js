@@ -44,7 +44,7 @@ router.get('/tours', auth, async (req, res) => {
 })
 
 //?subarrows=true&tokens=true
-router.get('/tourData', auth, async (req, res) => {
+router.post('/tourData', auth, async (req, res) => {
 
   try {
 
