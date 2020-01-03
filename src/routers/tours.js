@@ -99,7 +99,7 @@ router.post('/tourData', auth, async (req, res) => {
       tourStopsArr,
     })
 
-    if (req.query.tokens) {
+    if (req.body.tokens) {
 
       const tokensRef = firestore.collection(`${docs[0]._ref.path}/tokens`)
       let docRefs = await tokensRef.listDocuments();
@@ -116,7 +116,7 @@ router.post('/tourData', auth, async (req, res) => {
 
     }
 
-    if (req.query.subarrows) {
+    if (req.body.subarrows) {
 
       const subarrowsRef = firestore.collection(`${docs[0]._ref.path}/sub arrows`)
       let docRefs = await subarrowsRef.listDocuments();
