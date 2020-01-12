@@ -61,11 +61,11 @@ router.post('/user', auth, async (req, res) => {
     //add Data
     //await userColRef.doc(`${uid}`).set(newUser);
 
-    res.status(200).send()
+    res.status(200).send({"msg":"User Created"})
 
   } catch (e) {
     console.log(e);
-    res.status(500).send()
+    res.status(401).send()
   }
 
 })
