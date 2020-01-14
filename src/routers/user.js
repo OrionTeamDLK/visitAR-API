@@ -13,29 +13,31 @@ router.post('/user', auth, async (req, res) => {
 
     const userRecord = await admin.auth().getUser(uid)
 
-    if(userRecord){
-        console.log("Successfully fetched user data:", userRecord.toJSON());
-        const userColRef = firestore.collection('users')
-        let docRefs = await userColRef.listDocuments();
+    if (userRecord) {
+      console.log("Successfully fetched user data:", userRecord.toJSON());
+      const userColRef = firestore.collection('users')
+      let docRefs = await userColRef.listDocuments();
 
-        for( let docRef of docRefs){
-          if (uid == docRef.id) {
-            res.status(400).send({
-              "error": `User ID ${docRef.id} Already Created`
-            })
-            return
-          }
+      for (let docRef of docRefs) {
+        if (uid == docRef.id) {
+          res.status(400).send({
+            "error": `User ID ${docRef.id} Already Created`
+          })
+          return
         }
+      }
 
-        const newUser = {
-          "favourite_list": [],
-          "history": []
-        }
+      const newUser = {
+        "favourite_list": [],
+        "history": []
+      }
 
-        await userColRef.doc(`${uid}`).set(newUser);
+      await userColRef.doc(`${uid}`).set(newUser);
 
     } else {
-      res.status(401).send({ "error" : error });
+      res.status(401).send({
+        "error": error
+      });
       console.log("Error fetching user data:", error);
     }
 
@@ -61,7 +63,9 @@ router.post('/user', auth, async (req, res) => {
     //add Data
     //await userColRef.doc(`${uid}`).set(newUser);
 
-    res.status(200).send({"msg":"User Created"})
+    res.status(200).send({
+      "msg": "User Created"
+    })
 
   } catch (e) {
     console.log(e);
@@ -78,11 +82,11 @@ router.post('/favourite', auth, async (req, res) => {
 
   docSnap = await documentRef.get();
 
-  if(docSnap.exists){
+  if (docSnap.exists) {
     const fav_arr = docSnap.get('favourite_list');
 
-    for( let fav of fav_arr){
-      if(fav.tour_id == tour_id){
+    for (let fav of fav_arr) {
+      if (fav.tour_id == tour_id) {
         res.status(400).send({
           "msg": "Tour Already Added"
         })
@@ -90,8 +94,12 @@ router.post('/favourite', auth, async (req, res) => {
       }
     }
 
-    fav_arr.push({"tour_id": tour_id});
-    documentRef.update({ favourite_list: fav_arr});
+    fav_arr.push({
+      "tour_id": tour_id
+    });
+    documentRef.update({
+      favourite_list: fav_arr
+    });
   } else {
     res.status(400).send({
       "msg": "User Document Not Found"
@@ -101,7 +109,7 @@ router.post('/favourite', auth, async (req, res) => {
 
 
   res.status(200).send({
-    "msg":`Added Tour ${tour_id}`
+    "msg": `Added Tour ${tour_id}`
   });
 })
 
@@ -113,33 +121,54 @@ router.delete('/favourite', auth, async (req, res) => {
 
   docSnap = await documentRef.get();
 
-  if(docSnap.exists){
+  if (docSnap.exists) {
     const fav_arr = docSnap.get('favourite_list');
-    const tourFound=false;
 
-    for( let fav of fav_arr){
-      while(fav.tour_id == tour_id){
-        tourFound = true
+    for( let i = 0 ; i < fav_arr.length; i++){
+      if(fav_arr[i].tour_id == tour_id){
+
+        fav_arr.splice(i , 1)
+
+        documentRef.update({
+          favourite_list: fav_arr
+        });
+
+        res.status(200).send({
+          "msg": `Tour Id ${tour_id} Removed`
+        })
+        return
       }
     }
-    someArray.splice(x, 1);
 
-    if(tourFound){
+    // const i = 0;
+    // if (fav.tour_id == tour_id && i == fav_arr.length ) {
+    //   res.status(400).send({
+    //     "msg": "Tour Detected"
+    //   })
+    //   return;
+    // } else {
+    //   res.status(400).send({
+    //     "msg": "Tour Not Detected"
+    //   })
+    //   return;
+    // }
+    // i++;
+    // fav_arr.push({
+    //   "tour_id": tour_id
+    // });
+    // documentRef.update({
+    //   favourite_list: fav_arr
+    // });
 
-    }
-
-    fav_arr.push({"tour_id": tour_id});
-    documentRef.update({ favourite_list: fav_arr});
+  } else {
+    res.status(400).send({
+      "msg": "User Document Not Found"
+    })
+    return;
   }
-  // if(fav.tour_id == tour_id){
-  //   res.status(400).send({
-  //     "msg": "Tour Already Added"
-  //   })
-  //   return;
-  // }
 
-  res.status(200).send({
-    "msg":`Added Tour ${tour_id}`
+  res.status(400).send({
+    "msg": `Tour ${tour_id} Not Found`
   });
 })
 
