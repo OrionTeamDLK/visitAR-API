@@ -70,4 +70,77 @@ router.post('/user', auth, async (req, res) => {
 
 })
 
+router.post('/favourite', auth, async (req, res) => {
+
+  const tour_id = req.body.id;
+  const uid = req.body.uid;
+  let documentRef = firestore.doc(`users/${uid}`);
+
+  docSnap = await documentRef.get();
+
+  if(docSnap.exists){
+    const fav_arr = docSnap.get('favourite_list');
+
+    for( let fav of fav_arr){
+      if(fav.tour_id == tour_id){
+        res.status(400).send({
+          "msg": "Tour Already Added"
+        })
+        return;
+      }
+    }
+
+    fav_arr.push({"tour_id": tour_id});
+    documentRef.update({ favourite_list: fav_arr});
+  } else {
+    res.status(400).send({
+      "msg": "User Document Not Found"
+    })
+    return;
+  }
+
+
+  res.status(200).send({
+    "msg":`Added Tour ${tour_id}`
+  });
+})
+
+router.delete('/favourite', auth, async (req, res) => {
+
+  const tour_id = req.body.id;
+  const uid = req.body.uid;
+  let documentRef = firestore.doc(`users/${uid}`);
+
+  docSnap = await documentRef.get();
+
+  if(docSnap.exists){
+    const fav_arr = docSnap.get('favourite_list');
+    const tourFound=false;
+
+    for( let fav of fav_arr){
+      while(fav.tour_id == tour_id){
+        tourFound = true
+      }
+    }
+    someArray.splice(x, 1);
+
+    if(tourFound){
+
+    }
+
+    fav_arr.push({"tour_id": tour_id});
+    documentRef.update({ favourite_list: fav_arr});
+  }
+  // if(fav.tour_id == tour_id){
+  //   res.status(400).send({
+  //     "msg": "Tour Already Added"
+  //   })
+  //   return;
+  // }
+
+  res.status(200).send({
+    "msg":`Added Tour ${tour_id}`
+  });
+})
+
 module.exports = router
