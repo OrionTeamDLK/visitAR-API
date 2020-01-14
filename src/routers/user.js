@@ -74,6 +74,25 @@ router.post('/user', auth, async (req, res) => {
 
 })
 
+router.get('/favourite', auth, async(req, res) => {
+
+  const uid = req.body.uid;
+  let documentRef = firestore.doc(`users/${uid}`);
+  docSnap = await documentRef.get();
+
+  if (!docSnap.exists){
+
+    res.status(400).send({
+      "msg": `User Document ${uid} Not Found`
+    })
+    return;
+
+  }
+  const fav_arr = docSnap.get('favourite_list');
+  res.status(200).send(fav_arr);
+
+})
+
 router.post('/favourite', auth, async (req, res) => {
 
   const tour_id = req.body.id;
@@ -139,34 +158,12 @@ router.delete('/favourite', auth, async (req, res) => {
         return
       }
     }
-
-    // const i = 0;
-    // if (fav.tour_id == tour_id && i == fav_arr.length ) {
-    //   res.status(400).send({
-    //     "msg": "Tour Detected"
-    //   })
-    //   return;
-    // } else {
-    //   res.status(400).send({
-    //     "msg": "Tour Not Detected"
-    //   })
-    //   return;
-    // }
-    // i++;
-    // fav_arr.push({
-    //   "tour_id": tour_id
-    // });
-    // documentRef.update({
-    //   favourite_list: fav_arr
-    // });
-
   } else {
     res.status(400).send({
       "msg": "User Document Not Found"
     })
     return;
   }
-
   res.status(400).send({
     "msg": `Tour ${tour_id} Not Found`
   });
