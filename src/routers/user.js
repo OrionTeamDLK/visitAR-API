@@ -63,7 +63,7 @@ router.post('/user', auth, async (req, res) => {
 
 router.get('/favourite', auth, async (req, res) => {
 
-  const uid = req.body.uid;
+  const uid = req.query.uid;
   let documentRef = firestore.doc(`users/${uid}`);
   docSnap = await documentRef.get();
 
