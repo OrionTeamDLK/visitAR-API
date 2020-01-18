@@ -20,7 +20,8 @@
     "express": "^4.17.1",
     "firebase": "^7.2.3",
     "firebase-admin": "^8.7.0",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "jest": "^24.9.0",
