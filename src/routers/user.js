@@ -139,7 +139,7 @@ router.get('/history', auth, async (req, res) => {
 
   try {
 
-    const uid = req.body.uid;
+    const uid = req.query.uid;
     const tourLogArr = [];
     let documentRef = firestore.doc(`users/${uid}`);
     docSnap = await documentRef.get();
