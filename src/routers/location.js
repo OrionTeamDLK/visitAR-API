@@ -1,6 +1,10 @@
 const express = require('express')
 const router = new express.Router()
+const auth = require('../middleware/auth')
 const admin = require('../db/firebase')
+
+const forecast = require('../utils/forecast');
+
 
 const firestore = admin.firestore();
 
@@ -31,5 +35,23 @@ const firestore = admin.firestore();
 //     res.status(500).send()
 //   }
 // })
+
+router.get('/weather', auth, async(req, res) => {
+
+  const lat = req.query.lat
+  const long = req.query.long
+
+
+  forecast(lat,long, (error, forecastData) => {
+
+  if(error){
+    return console.log(error);
+    }
+
+
+    res.status(200).send({ "msg" : forecastData } )
+  });
+
+})
 
 module.exports = router
