@@ -44,62 +44,33 @@ router.get('/tours', auth, async (req, res) => {
 })
 
 //?subarrows=true&tokens=true
-router.post('/tourData', auth, async (req, res) => {
+router.get('/tourData', auth, async (req, res) => {
 
   try {
 
-    let documentArray = [];
-    let tourStopsArr = [];
-
+    const tourId = req.query.id
     const tourRef = firestore.collection('tours')
+    const querySnapshot = await tourRef.where('id', '==', parseInt(tourId) ).get()
 
-    // console.log(req.query)
-    //
-    // if (req.query.subarrows) {
-    //   console.log(req.query.subarrows)
-    // }
-    //
-
-
-    const querySnapshot = await tourRef.where('id', '==', req.body.id).get()
-
-    let docs = querySnapshot.docs
-
-    console.log(docs[0]._ref.path)
-
-    const documentSnapshot = await docs[0]._ref.get()
-
-    let {
-      id,
-      name,
-      distance_km,
-      time_mins,
-      starting_point,
-      over_view,
-      tourStops
-    } = documentSnapshot.data();
-
-
-    console.log(documentSnapshot.data())
-
-    for (let tourStop of tourStops) {
-      const documentSnapshot = await tourStop.get()
-      if (documentSnapshot.exists) {
-        tourStopsArr.push(documentSnapshot.data())
-      }
+    if(querySnapshot._size == 0){
+      res.status(400).send({"msg": `Tour ID ${tourId} Not Found`})
+      return
     }
 
-    documentArray.push({
-      id,
-      name,
-      distance_km,
-      time_mins,
-      starting_point,
-      over_view,
-      tourStopsArr,
-    })
+    let docs = querySnapshot.docs
+    const data = docs[0].data()
 
-    if (req.body.tokens) {
+    let tourStops = await firestore.getAll(...  data.tourStops)
+    let tourStopsArr = []
+
+    for( let tourStop of tourStops){
+      tourStopsArr.push(tourStop.data())
+    }
+
+    data.tourStops = tourStopsArr;
+
+
+    if (req.query.tokens) {
 
       const tokensRef = firestore.collection(`${docs[0]._ref.path}/tokens`)
       let docRefs = await tokensRef.listDocuments();
@@ -110,13 +81,10 @@ router.post('/tourData', auth, async (req, res) => {
         tokenArr.push(documentSnapshot.data())
       }
 
-      documentArray.push({
-        "tokens": tokenArr
-      })
-
+      data.tokens = tokenArr
     }
 
-    if (req.body.subarrows) {
+    if (req.query.subarrows) {
 
       const subarrowsRef = firestore.collection(`${docs[0]._ref.path}/sub arrows`)
       let docRefs = await subarrowsRef.listDocuments();
@@ -127,73 +95,9 @@ router.post('/tourData', auth, async (req, res) => {
         subarrowsArr.push(documentSnapshot.data())
       }
 
-      documentArray.push({
-        "sub_arrows": subarrowsArr
-      })
-
+      data.subarrows = subarrowsArr;
     }
-
-
-    res.status(200).send(documentArray)
-
-
-
-    // for (let doc of docs) {
-    //
-    //   const subCollections = await doc._ref.listCollections()
-    //
-    //   for (let subCollection of subCollections) {
-    //
-    //     let docRefs = await subCollection.listDocuments();
-    //
-    //     for (let docRef of docRefs) {
-    //       let documentSnapshot = await docRef.get()
-    //
-    //       if (subCollection.id == "sub arrows") {
-    //         subArrows.push(documentSnapshot.data())
-    //       } else {
-    //         tokens.push(documentSnapshot.data())
-    //       }
-    //     }
-    //     //console.log(docRef)
-    //
-    //   }
-    //   let tourStopsArr = [];
-    //
-    //   let {
-    //     id,
-    //     name,
-    //     distance_km,
-    //     time_mins,
-    //     starting_point,
-    //     over_view,
-    //     tourStops
-    //   } = doc.data();
-
-    //
-    //   for (let tourStop of tourStops) {
-    //     const documentSnapshot = await tourStop.get()
-    //
-    //     if (documentSnapshot.exists) {
-    //       tourStopsArr.push(documentSnapshot.data())
-    //     }
-    //   }
-
-    //
-    //   documentArray.push({
-    //     id,
-    //     name,
-    //     distance_km,
-    //     time_mins,
-    //     starting_point,
-    //     over_view,
-    //     tourStopsArr,
-    //     subArrows,
-    //     tokens
-    //   })
-    // }
-
-
+    res.status(200).send(data)
 
   } catch (e) {
     console.log(e)
