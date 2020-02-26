@@ -43,7 +43,7 @@ router.get('/tours', auth, async (req, res) => {
   }
 })
 
-//?subarrows=true&tokens=true
+//?tokens=true
 router.get('/tourData', auth, async (req, res) => {
 
   try {
