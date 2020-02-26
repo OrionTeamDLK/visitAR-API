@@ -64,7 +64,7 @@ router.get('/tourData', auth, async (req, res) => {
     let tourStopsArr = []
 
     for( let tourStop of tourStops){
-      tourStopsArr.push(tourStop.data().sort())
+      tourStopsArr.push(tourStop.data())
     }
 
     tourStopsArr.sort((a, b) => (a.id > b.id) ? 1 : -1)
