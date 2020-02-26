@@ -64,11 +64,11 @@ router.get('/tourData', auth, async (req, res) => {
     let tourStopsArr = []
 
     for( let tourStop of tourStops){
-      tourStopsArr.push(tourStop.data())
+      tourStopsArr.push(tourStop.data().sort())
     }
 
+    tourStopsArr.sort((a, b) => (a.id > b.id) ? 1 : -1)
     data.tourStops = tourStopsArr;
-
 
     if (req.query.tokens) {
 
@@ -84,19 +84,6 @@ router.get('/tourData', auth, async (req, res) => {
       data.tokens = tokenArr
     }
 
-    if (req.query.subarrows) {
-
-      const subarrowsRef = firestore.collection(`${docs[0]._ref.path}/sub arrows`)
-      let docRefs = await subarrowsRef.listDocuments();
-      let subarrowsArr = []
-
-      for (let docRef of docRefs) {
-        let documentSnapshot = await docRef.get()
-        subarrowsArr.push(documentSnapshot.data())
-      }
-
-      data.subarrows = subarrowsArr;
-    }
     res.status(200).send(data)
 
   } catch (e) {
