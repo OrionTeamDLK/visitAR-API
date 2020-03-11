@@ -5,10 +5,6 @@ const auth = require('../middleware/auth')
 
 const firestore = admin.firestore();
 
-// TODO: Add v2 of each endpoint making use od direct refencing.
-// TODO: Use Artillery to test performace of old and new endpoints.
-// TODO: Add multiple retuen options for the tourData endpint, i.e subArrows=true
-
 router.get('/tours', auth, async (req, res) => {
 
   try {
