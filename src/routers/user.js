@@ -2,8 +2,17 @@ const express = require('express')
 const router = new express.Router()
 const admin = require('../db/firebase')
 const auth = require('../middleware/auth')
+const jwt = require('jsonwebtoken')
 
 const firestore = admin.firestore()
+
+router.get('/auth', async (req, res) => {
+  
+  const token = jwt.sign({}, process.env.JWT_SECRET)
+  res.status(201).send(token);
+
+
+})
 
 router.post('/user', auth, async (req, res) => {
 
