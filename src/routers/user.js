@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 const firestore = admin.firestore()
 
 router.get('/auth', async (req, res) => {
-  
+
   const token = jwt.sign({}, process.env.JWT_SECRET)
   res.status(201).send(token);
 
@@ -142,47 +142,6 @@ router.delete('/favourite', auth, async (req, res) => {
     return;
   }
   res.status(400).send({"msg": `Tour ${tour_id} Not Found`});
-})
-
-router.get('/history', auth, async (req, res) => {
-
-  try {
-
-    const uid = req.query.uid;
-    const tourLogArr = [];
-    let documentRef = firestore.doc(`users/${uid}`);
-    docSnap = await documentRef.get();
-
-    if (!docSnap.exists) {
-
-      res.status(400).send({"msg": `User Document ${uid} Not Found`})
-      return;
-
-    }
-    const history_arr = docSnap.get('history');
-
-    const docs = await firestore.getAll(... history_arr)
-    const history = [];
-
-    for( let doc of docs){
-      const tourTakenRef = await doc.get('tour_taken');
-      const tourTakenSnap = await tourTakenRef.get();
-
-      const data = doc.data()
-      data.tour_taken = tourTakenSnap.get('name')
-      data.time_started[0] = data.time_started[0].toDate()
-      data.time_started[1] = data.time_started[1].toDate()
-      history.push(data)
-    }
-    console.log(history)
-
-
-    res.status(200).send(history);
-  } catch (e) {
-    console.log(e);
-    res.status(500).send(e)
-  }
-
 })
 
 module.exports = router
