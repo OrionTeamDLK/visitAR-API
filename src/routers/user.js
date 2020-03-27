@@ -8,9 +8,25 @@ const firestore = admin.firestore()
 
 router.get('/auth', async (req, res) => {
 
-  const token = jwt.sign({}, process.env.JWT_SECRET)
+  const token = jwt.sign({"uid": null}, process.env.JWT_SECRET)
   res.status(201).send(token);
 
+  const userlogRef = firestore.collection('user_log');
+
+  try {
+
+    const userRecord = {
+      "token": token,
+      "uid": null,
+      "timestamp": admin.firestore.Timestamp.fromMillis(new Date())
+    }
+
+    await userlogRef.doc().set(userRecord);
+    res.status(200).send();
+  } catch(e) {
+    console.log(e);
+    res.status(500).send()
+  }
 
 })
 
