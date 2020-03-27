@@ -2,6 +2,7 @@ const express = require('express')
 const router = new express.Router()
 const admin = require('../db/firebase')
 const auth = require('../middleware/auth')
+const formatRequest = require('../utils/tours');
 
 const firestore = admin.firestore();
 
@@ -50,7 +51,9 @@ router.post('/tourlog', auth, async (req, res) => {
   const tourlogRef = firestore.collection('tour log');
 
   try {
-    await tourlogRef.doc().set(req.body);
+
+    const formattedReq = await formatRequest(req.body)
+    await tourlogRef.doc().set(formattedReq);
     res.status(200).send();
   } catch(e) {
     console.log(e);
