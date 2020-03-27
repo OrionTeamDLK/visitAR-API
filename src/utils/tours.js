@@ -5,19 +5,20 @@ const moment = require('moment')
 const firestore = admin.firestore();
 
 const formatRequest = async (tourlog) =>{
-  const newTourlog = {};
+  const newTourlog = {}
 
   const TOUR_DATE = tourlog.date;
 
-  newTourlog.date = formatDate(TOUR_DATE);
-  newTourlog.time_started = formatDate(TOUR_DATE + " " + tourlog.time_started);
-  newTourlog.time_finished = formatDate(TOUR_DATE + " " + tourlog.time_finished);
-  newTourlog.tour_completed = tourlog.tour_completed;
+  newTourlog.date = formatDate(TOUR_DATE)
+  newTourlog.time_started = formatDate(TOUR_DATE + " " + tourlog.time_started)
+  newTourlog.time_finished = formatDate(TOUR_DATE + " " + tourlog.time_finished)
+  newTourlog.tour_completed = tourlog.tour_completed
+  newTourlog.tokens_collected = tourlog.tokens_collected
   newTourlog.landmarks_visited = [];
 
   for(let landmark of tourlog.landmarks_visited) {
-    landmark.time_visited = formatDate(TOUR_DATE + " " + landmark.time_visited);
-    newTourlog.landmarks_visited.push(landmark);
+    landmark.time_visited = formatDate(TOUR_DATE + " " + landmark.time_visited)
+    newTourlog.landmarks_visited.push(landmark)
   }
 
   return newTourlog;
