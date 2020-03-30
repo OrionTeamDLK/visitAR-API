@@ -53,8 +53,32 @@ router.post('/tourlog', auth, async (req, res) => {
   try {
 
     const formattedReq = await formatRequest(req.body)
-    await tourlogRef.doc().set(formattedReq);
-    res.status(200).send();
+    const tourlogDocRef = tourlogRef.doc()
+
+    const tourlogID = tourlogDocRef._path.segments[1]
+    const tourPath = firestore.doc(`tour log/${tourlogID}/`)
+
+    const result = await tourlogDocRef.set(formattedReq)
+
+    res.status(200).send()
+
+    if(req.body.uid === null){
+      return
+    }
+
+    const usersRef = firestore.doc(`users/${req.body.uid}`)
+    const users = await usersRef.get()
+
+    if(users.exists){
+      const userData = users.data()
+      userData.history.push(tourPath)
+      await usersRef.update({"history": userData.history});
+
+    } else {
+      console.log(`User Refrence Not Found`)
+      return
+    }
+
   } catch(e) {
     console.log(e);
     res.status(500).send()

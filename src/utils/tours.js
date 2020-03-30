@@ -14,6 +14,11 @@ const formatRequest = async (tourlog) =>{
   newTourlog.time_finished = formatDate(TOUR_DATE + " " + tourlog.time_finished)
   newTourlog.tour_completed = tourlog.tour_completed
   newTourlog.tokens_collected = tourlog.tokens_collected
+
+  // if(tourlog.uid != null){
+  //   newTourlog.uid = tourlog.uid
+  // }
+
   newTourlog.landmarks_visited = [];
 
   for(let landmark of tourlog.landmarks_visited) {
@@ -25,12 +30,8 @@ const formatRequest = async (tourlog) =>{
 }
 
 const formatDate = (date) => {
-
   date = new Date(moment(date, "DD/MM/YYYY  h:mm:ss").format("DD MMM YYYY  h:mm:ss"));
-
   let newDate = Date.parse(date)
-  console.log(newDate)
-
   return admin.firestore.Timestamp.fromMillis(newDate)
 }
 
