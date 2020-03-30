@@ -16,27 +16,29 @@ router.get('/tourlog', auth, async (req, res) => {
     docSnap = await documentRef.get();
 
     if (!docSnap.exists) {
-
       res.status(400).send({"msg": `User Document ${uid} Not Found`})
       return;
-
     }
+
     const history_arr = docSnap.get('history');
 
     const docs = await firestore.getAll(... history_arr)
     const history = [];
 
     for( let doc of docs){
-      const tourTakenRef = await doc.get('tour_taken');
-      const tourTakenSnap = await tourTakenRef.get();
-
+      console.log(doc)
+      //const tourTakenRef = await doc.get('tour_taken');
+    //   const tourTakenSnap = await tourTakenRef.get();
+    //
       const data = doc.data()
-      data.tour_taken = tourTakenSnap.get('name')
-      data.time_started[0] = data.time_started[0].toDate()
-      data.time_started[1] = data.time_started[1].toDate()
+      data.tour_taken         = "Historic Tour"
+      data.time_started       = data.time_started.toDate()
+      data.time_finished      = data.time_finished.toDate()
+      data.Date               = data.date.toDate()
+      console.log(data)
       history.push(data)
     }
-    console.log(history)
+     //console.log(history_arr)
 
 
     res.status(200).send(history);
