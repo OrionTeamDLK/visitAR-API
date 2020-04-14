@@ -14,6 +14,7 @@ const formatRequest = async (tourlog) =>{
   newTourlog.time_finished = formatDate(TOUR_DATE + " " + tourlog.time_finished)
   newTourlog.tour_completed = tourlog.tour_completed
   newTourlog.tokens_collected = tourlog.tokens_collected
+  newTourlog.coords = tourlog.coords
 
   // if(tourlog.uid != null){
   //   newTourlog.uid = tourlog.uid
