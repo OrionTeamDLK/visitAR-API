@@ -63,6 +63,7 @@ router.get('/tourData', auth, async (req, res) => {
       tourStopsArr.push(tourStop.data())
     }
 
+    //Sort Tour Stops by Id
     tourStopsArr.sort((a, b) => (a.id > b.id) ? 1 : -1)
     data.tourStops = tourStopsArr;
 

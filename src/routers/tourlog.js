@@ -21,15 +21,10 @@ router.get('/tourlog', auth, async (req, res) => {
     }
 
     const history_arr = docSnap.get('history');
-
     const docs = await firestore.getAll(... history_arr)
     const history = [];
 
     for( let doc of docs){
-      console.log(doc)
-      //const tourTakenRef = await doc.get('tour_taken');
-    //   const tourTakenSnap = await tourTakenRef.get();
-    //
       const data = doc.data()
       data.tour_taken         = "Historic Tour"
       data.time_started       = data.time_started.toDate()
@@ -38,10 +33,9 @@ router.get('/tourlog', auth, async (req, res) => {
       console.log(data)
       history.push(data)
     }
-     //console.log(history_arr)
-
-
+    
     res.status(200).send(history);
+
   } catch (e) {
     console.log(e);
     res.status(500).send(e)

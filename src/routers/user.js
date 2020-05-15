@@ -11,6 +11,7 @@ router.get('/auth', async (req, res) => {
   const token = jwt.sign({"uid": null}, process.env.JWT_SECRET)
   res.status(201).send(token);
 
+  //Save Token
   const userlogRef = firestore.collection('user_log');
 
   try {
@@ -61,22 +62,7 @@ router.post('/user', auth, async (req, res) => {
       res.status(401).send({"error": error});
       console.log("Error fetching user data:", error);
     }
-
-    // const profilePicture = (req.body.profile != null) ? req.body.profile :
-    //   'https://firebasestorage.googleapis.com/v0/b/orion-57b76.appspot.com/o/profile_pictures%2Fdeafult_profile.jpg?alt=media&token=dd4a8e95-4dfc-4ce7-bbeb-fcccb64fbf94'
-
-    //new
-
-    //old
-    // const newUser = {
-    //   "favourite_list": [],
-    //   "history": [],
-    //   "profile_pic": profilePicture
-    // }
-
-    //add Data
-    //await userColRef.doc(`${uid}`).set(newUser);
-
+    
     res.status(200).send({"msg": "User Created"})
 
   } catch (e) {
