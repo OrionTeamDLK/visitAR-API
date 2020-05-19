@@ -31,7 +31,7 @@ Install NPM modules
 npm install
 ```
 
-Add system config folder. Config files found in moodle upload. Files include in config folder are :
+Add system config folder. Config files found in Orion Google Drive. Files include in config folder are :
 
 ```
 dev.env
